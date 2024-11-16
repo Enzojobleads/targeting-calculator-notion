@@ -1,11 +1,53 @@
 import React, { useState, useEffect } from 'react';
-import { Card, CardHeader, CardTitle, CardContent } from "@/components/ui/card";
-import { Input } from "@/components/ui/input";
-import { Badge } from "@/components/ui/badge";
-import { Button } from "@/components/ui/button";
-import { Download, Users } from "lucide-react";
+import { Users, Download } from 'lucide-react';
 
-// Ajout des types
+const CardHeader: React.FC<{className?: string; children: React.ReactNode}> = ({className, children}) => (
+  <div className={`p-6 ${className}`}>{children}</div>
+);
+
+const CardTitle: React.FC<{className?: string; children: React.ReactNode}> = ({className, children}) => (
+  <h3 className={`text-2xl font-semibold ${className}`}>{children}</h3>
+);
+
+const CardContent: React.FC<{className?: string; children: React.ReactNode}> = ({className, children}) => (
+  <div className={`p-6 ${className}`}>{children}</div>
+);
+
+const Card: React.FC<{className?: string; children: React.ReactNode}> = ({className, children}) => (
+  <div className={`bg-white rounded-lg border shadow-sm ${className}`}>{children}</div>
+);
+
+const Input: React.FC<React.InputHTMLAttributes<HTMLInputElement>> = (props) => (
+  <input
+    {...props}
+    className={`flex h-10 w-full rounded-md border px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-offset-2 ${props.className}`}
+  />
+);
+
+const Badge: React.FC<{children: React.ReactNode; variant?: string; className?: string}> = ({children, variant = 'default', className = ''}) => (
+  <span className={`inline-flex items-center rounded-full px-2.5 py-0.5 text-xs font-semibold ${
+    variant === 'secondary' ? 'bg-gray-100 text-gray-800' : ''
+  } ${className}`}>
+    {children}
+  </span>
+);
+
+const Button: React.FC<React.ButtonHTMLAttributes<HTMLButtonElement> & {variant?: string}> = ({
+  children,
+  className = '',
+  variant = 'default',
+  ...props
+}) => (
+  <button
+    className={`inline-flex items-center justify-center rounded-md font-medium transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring px-4 py-2 ${
+      variant === 'outline' ? 'border border-input bg-background hover:bg-accent hover:text-accent-foreground' : ''
+    } ${className}`}
+    {...props}
+  >
+    {children}
+  </button>
+);
+
 type AwarenessStage = 'most' | 'solution' | 'problem';
 
 interface Settings {
@@ -16,14 +58,7 @@ interface Settings {
   personasPerAccount: number;
 }
 
-interface DerivedData {
-  callsPerMonth: number;
-  reachableMarket: number;
-  coverage: number;
-  timeToComplete: number;
-}
-
-const TargetingCalculator = () => {
+export const TargetingCalculator: React.FC = () => {
   const [settings, setSettings] = useState<Settings>({
     callsPerWeek: 150,
     salesPeople: 1,
@@ -32,7 +67,7 @@ const TargetingCalculator = () => {
     personasPerAccount: 1
   });
 
-  const [derivedData, setDerivedData] = useState<DerivedData>({
+  const [derivedData, setDerivedData] = useState({
     callsPerMonth: 0,
     reachableMarket: 0,
     coverage: 0,
@@ -61,7 +96,7 @@ const TargetingCalculator = () => {
   }, [settings]);
 
   const handleExport = () => {
-    alert("La fonction d'export nécessite une implémentation côté serveur. Vous pouvez utiliser la capture d'écran de votre système d'exploitation pour sauvegarder les résultats.");
+    alert("Utilisez la capture d'écran de votre système pour sauvegarder les résultats.");
   };
 
   return (
@@ -69,24 +104,24 @@ const TargetingCalculator = () => {
       <CardHeader className="border-b">
         <div className="flex justify-between items-center">
           <div>
-            <CardTitle className="text-xl">Calculateur de Ciblage ABM</CardTitle>
+            <CardTitle>Calculateur de Ciblage ABM</CardTitle>
             <p className="text-sm text-gray-500 mt-1">
               Account Based Marketing - Stratégie de ciblage par entreprise
             </p>
           </div>
-          <Button 
-            onClick={handleExport} 
-            className="flex items-center gap-2"
-            variant="outline"
-          >
+          <Button onClick={handleExport} className="flex items-center gap-2" variant="outline">
             <Download size={16} />
             Capture d'écran
           </Button>
         </div>
       </CardHeader>
+      
+      {/* Le reste du composant reste identique */}
+      
       <CardContent>
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 p-4">
           <div className="space-y-6">
+            {/* Configuration inputs */}
             <div>
               <label className="block text-sm font-medium mb-2">
                 Calls par semaine par commercial
@@ -166,7 +201,7 @@ const TargetingCalculator = () => {
                     }`}
                     onClick={() => setSettings(prev => ({
                       ...prev,
-                      awarenessStage: stage
+                      awarenessStage: stage as AwarenessStage
                     }))}
                   >
                     <div className="text-base mb-1">
@@ -183,6 +218,7 @@ const TargetingCalculator = () => {
 
           <div className="space-y-6">
             <div className="aspect-square relative rounded-lg bg-gray-50 border flex items-center justify-center overflow-hidden">
+              {/* Visualization circles */}
               <div className="absolute inset-0 flex items-center justify-center">
                 <div className="relative w-4/5 h-4/5">
                   <div className="absolute inset-0 rounded-full border-2 border-gray-300 bg-gray-100 opacity-30" />
@@ -259,7 +295,7 @@ const TargetingCalculator = () => {
                   {derivedData.coverage < 20 && 
                     "Couverture faible : Considérez d'augmenter vos ressources commerciales ou de cibler un segment plus spécifique."
                   }
-                  {derivedData.coverage > 80 &&
+{derivedData.coverage > 80 &&
                     "Excellente couverture : Vous pourriez élargir votre ciblage ou diversifier vos actions marketing."
                   }
                   {derivedData.coverage >= 20 && derivedData.coverage <= 80 &&
@@ -283,4 +319,4 @@ const TargetingCalculator = () => {
   );
 };
 
-export { TargetingCalculator };
+export default TargetingCalculator;
