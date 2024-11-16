@@ -5,8 +5,26 @@ import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Download, Users } from "lucide-react";
 
+// Ajout des types
+type AwarenessStage = 'most' | 'solution' | 'problem';
+
+interface Settings {
+  callsPerWeek: number;
+  salesPeople: number;
+  totalMarket: number;
+  awarenessStage: AwarenessStage;
+  personasPerAccount: number;
+}
+
+interface DerivedData {
+  callsPerMonth: number;
+  reachableMarket: number;
+  coverage: number;
+  timeToComplete: number;
+}
+
 const TargetingCalculator = () => {
-  const [settings, setSettings] = useState({
+  const [settings, setSettings] = useState<Settings>({
     callsPerWeek: 150,
     salesPeople: 1,
     totalMarket: 10000,
@@ -14,14 +32,14 @@ const TargetingCalculator = () => {
     personasPerAccount: 1
   });
 
-  const [derivedData, setDerivedData] = useState({
+  const [derivedData, setDerivedData] = useState<DerivedData>({
     callsPerMonth: 0,
     reachableMarket: 0,
     coverage: 0,
     timeToComplete: 0
   });
 
-  const awarenessDistribution = {
+  const awarenessDistribution: Record<AwarenessStage, number> = {
     most: 0.05,
     solution: 0.20,
     problem: 0.35,
